@@ -1,0 +1,22 @@
+RandomizeWeight(); /* initialize weight and bias */
+RandomizeBias();
+ReadTeachingData(readfileptr); /* read teaching data from file */
+RandomizeInitStateAllSeqs(); /* randomize initial step context state for all sequences */
+/* Learning of maxSeq sequences */
+for (epoch=0; epoch<maxEpoch; ++epoch) {
+    for (iseq=0; iseq<maxSeq; ++iseq) { /* maxSeq is max # of sequences trained */
+        /* Forward computation */
+        for (step=0; step<maxStep[iseq]; ++step)
+            forwardCompt(step, iseq); /* input => Hidden, Hidden => output */
+        
+        /* BackPropThroughTime computation */
+        for (step=maxStep[iseq]-1; step>=0; --step)
+            backProp(step, iseq); /* output => hidden, hidden => input */
+        
+        updateInitState(iseq);
+    }
+    updateweight();
+    updatebias();
+}
+SaveWeightBias(fileptr);
+SaveActivationHiddenOutforAllStepsAllSeqs(act-fileptr);
